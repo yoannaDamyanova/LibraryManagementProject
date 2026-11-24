@@ -41,15 +41,17 @@ namespace LibraryProject
             }
         }
 
+        // Метод за зареждане на начални данни в дървото
         static void LoadInitialData()
         {
+            // Добавяме няколко книги в дървото за демонстрация
             bst.Insert(new Book { ISBN = 1005, Title = "Algorithms", Author = "Ivanov", Year = 2020 });
             bst.Insert(new Book { ISBN = 1002, Title = "Data Structures", Author = "Petrov", Year = 2018 });
             bst.Insert(new Book { ISBN = 1008, Title = "C# Programming", Author = "Georgiev", Year = 2021 });
             bst.Insert(new Book { ISBN = 1001, Title = "Databases", Author = "Dimitrov", Year = 2019 });
         }
 
-
+        
         static void AddBook()
         {
             Console.Write("ISBN: ");
@@ -72,16 +74,17 @@ namespace LibraryProject
                 Year = year
             };
 
+            // Опитваме се да добавим книгата в дървото и проверяваме дали е успешно
             if (bst.Insert(book))
             {
                 Console.WriteLine("Book added successfully.");
             }
             else
             {
+                // Ако ISBN вече съществува, показваме съобщение за грешка
                 Console.WriteLine("Error: A book with this ISBN already exists.");
             }
         }
-
 
         static void DeleteBook()
         {
@@ -97,6 +100,7 @@ namespace LibraryProject
             Console.Write("Enter ISBN of the book to edit: ");
             int isbn = int.Parse(Console.ReadLine());
 
+            // Използваме метода Search на BST, за да намерим книгата по ISBN
             Book book = bst.Search(isbn);
 
             if (book != null)
@@ -114,14 +118,15 @@ namespace LibraryProject
             }
             else
             {
+                // Ако книгата не е намерена, показваме съобщение за грешка
                 Console.WriteLine("Book not found.");
             }
         }
 
         static void PrintAll()
         {
-            List<Book> books = new List<Book>();
-            bst.GetAll(bst.Root, books);
+            List<Book> books = new List<Book>(); // създаваме списък, в който ще съхраним всички книги от дървото
+            bst.GetAll(bst.Root, books); // извикваме метода GetAll, който обхожда дървото и добавя всички книги в списъка
 
             foreach (var b in books)
                 Console.WriteLine(b);
@@ -132,7 +137,7 @@ namespace LibraryProject
             Console.Write("Enter ISBN to search: ");
             int isbn = int.Parse(Console.ReadLine());
 
-            Book result = bst.Search(isbn);
+            Book result = bst.Search(isbn); // използваме метода Search на BST, за да намерим книгата по ISBN
 
             if (result != null)
                 Console.WriteLine("Book found: " + result);
@@ -142,40 +147,57 @@ namespace LibraryProject
 
         static void SortAndPrint(bool compareByYear)
         {
-            List<Book> books = new List<Book>();
-            bst.GetAll(bst.Root, books);
+            List<Book> books = new List<Book>(); // създаваме списък, в който ще съхраним всички книги от дървото
+            bst.GetAll(bst.Root, books); // извикваме метода GetAll, който обхожда дървото и добавя всички книги в списъка
 
-            Book[] arr = books.ToArray();
+            Book[] arr = books.ToArray(); // преобразуваме списъка в масив, за да можем да използваме QuickSort алгоритъма
 
+            // извикваме QuickSort, като подаваме масива, началния и крайния индекс, както и флага за сравнение по година или заглавие
+            // compareByYear = true => сортираме по година
+            // compareByYear = false => сортираме по заглавие
             QuickSort(arr, 0, arr.Length - 1, compareByYear);
 
             foreach (var b in arr)
                 Console.WriteLine(b);
         }
 
+        //QuickSort – използваме го за сортиране на книгите по година или заглавие.
+        //Devide and conquer – разделяме масива на по-малки части, сортираме ги и след това ги обединяваме.
+        //1. Избира опорен елемент(pivot).
+
+        //2. Разделя масива на две части.
+
+        //3. Поставя pivot на правилната му позиция.
+
+        //4. Сортира рекурсивно двете части.
         static void QuickSort(Book[] arr, int left, int right, bool compareByYear)
         {
-            if (left < right)
+            if (left < right) // ако има повече от един елемент в масива, продължаваме със сортирането
             {
-                int pivot = Partition(arr, left, right, compareByYear);
+                // извикваме метода Partition, който разделя масива на две части и връща индекса на опорния елемент
+                int pivot = Partition(arr, left, right, compareByYear); 
 
-                QuickSort(arr, left, pivot - 1, compareByYear);
-                QuickSort(arr, pivot + 1, right, compareByYear);
+                QuickSort(arr, left, pivot - 1, compareByYear); // рекурсивно сортираме лявата част на масива
+                QuickSort(arr, pivot + 1, right, compareByYear); // рекурсивно сортираме дясната част на масива
             }
         }
 
+        // Методът Partition разделя масива на две части спрямо опорния елемент (pivot)
         static int Partition(Book[] arr, int left, int right, bool compareByYear)
         {
+            // Избираме последния елемент от текущия диапазон за pivot.
             Book pivotValue = arr[right];
             int i = left - 1;
 
+            // Обхождаме елементите от left до right-1 и сравняваме всеки елемент с pivotValue.
             for (int j = left; j < right; j++)
             {
+                // В зависимост от флага compareByYear, сравняваме по година или по заглавие.
                 bool condition = compareByYear
                     ? arr[j].Year < pivotValue.Year
                     : string.Compare(arr[j].Title, pivotValue.Title) < 0;
 
-                if (condition)
+                if (condition) //Ако условието е изпълнено, разменяме елементите така, че по-малките да се преместят вляво.
                 {
                     i++;
 
@@ -185,6 +207,7 @@ namespace LibraryProject
                 }
             }
 
+            // След като сме преместили всички по-малки елементи вляво, разменяме pivotValue с елемента на позиция i+1.
             var swapTemp = arr[i + 1];
             arr[i + 1] = arr[right];
             arr[right] = swapTemp;

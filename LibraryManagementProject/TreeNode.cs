@@ -4,6 +4,8 @@ using System.Text;
 
 namespace LibraryManagementProject
 {
+    //TreeNode – представлява възел в двоичното дърво.
+    //Всеки възел съдържа данни (книга) и препратки към лявото и дясното поддърво.
     public class TreeNode
     {
         public Book Data { get; set; }

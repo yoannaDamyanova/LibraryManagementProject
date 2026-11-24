@@ -4,6 +4,7 @@ using System.Text;
 
 namespace LibraryManagementProject
 {
+    //Book – представлява книга с ISBN, заглавие, автор и година на издаване.
     public class Book
     {
         public int ISBN { get; set; }
